@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "storybook": "start-storybook",
+    "storybook": "NODE_OPTIONS=--openssl-legacy-provider start-storybook",
     "build-storybook": "build-storybook -c .storybook -o .dist",
     "start": "parcel ./runLocally/index.html",
     "test:unit": "jest",
