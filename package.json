@@ -1,7 +1,7 @@
 {
   "scripts": {
     "storybook": "NODE_OPTIONS=--openssl-legacy-provider start-storybook",
-    "build-storybook": "NODE_OPTIONS=--openssl-legacy-provider build-storybook -c .storybook -o .dist",
+    "build-storybook": "NODE_OPTIONS=--openssl-legacy-provider build-storybook -c .storybook -o .dist --only-changed --branch-name=main",
     "start": "parcel ./runLocally/index.html",
     "test:unit": "jest",
     "test:lint": "eslint src .eslintplugin .storybook --ext .js,.jsx,.mjs",
