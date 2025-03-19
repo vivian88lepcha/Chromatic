@@ -1,11 +1,12 @@
 {
   "scripts": {
     "storybook": "NODE_OPTIONS=--openssl-legacy-provider start-storybook",
-    "build-storybook": "NODE_OPTIONS=--openssl-legacy-provider build-storybook -c .storybook -o .dist --only-changed --branch-name=main",
+    "build-storybook": "NODE_OPTIONS=--openssl-legacy-provider build-storybook -c .storybook -o .dist ",
     "start": "parcel ./runLocally/index.html",
     "test:unit": "jest",
     "test:lint": "eslint src .eslintplugin .storybook --ext .js,.jsx,.mjs",
-    "test": "npm run test:unit && npm run test:lint"
+    "test": "npm run test:unit && npm run test:lint",
+    "chromatic": "chromatic --only-changed --branch-name=main"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
