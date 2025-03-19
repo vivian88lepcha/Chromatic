@@ -1,0 +1,96 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+          cache-dependency-path: './react-examples-storybook/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./react-examples-storybook
+        run: npm ci
+
+      - name: Run linters
+        working-directory: ./react-examples-storybook
+        run: npm run test:lint
+
+      - name: Run unit tests
+        working-directory: ./react-examples-storybook
+        run: npm run test:unit
+
+      - name: Build Storybook
+        working-directory: ./react-examples-storybook
+        run: npm run build-storybook
+
+      - name: Upload Storybook build
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-build
+          path: ./react-examples-storybook/.dist
+          retention-days: 7
+
+  chromatic:
+    name: Run Chromatic
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+          cache-dependency-path: './react-examples-storybook/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./react-examples-storybook
+        run: npm ci
+
+      - name: Run Chromatic
+        working-directory: ./react-examples-storybook
+        run: npm run chromatic
+        env:
+          CHROMATIC_PROJECT_TOKEN: chpt_1f34e3ab8feb8f4
+
+  deploy:
+    name: Deploy
+    needs: [build, chromatic]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Storybook build
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-build
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./dist
+          branch: gh-pages 
