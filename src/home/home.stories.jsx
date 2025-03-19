@@ -23,7 +23,7 @@ storiesOf('home', module)
       }}
       onClick={linkTo('home', 'instructions')}
     >
-      <img style={{ maxWidth: '50%' }} src={image.src} alt={image.alt} />
+      <img style={{ maxWidth: '100%' }} src={image.src} alt={image.alt} />
     </button>
   ))
   .add('instructions', () => (
